@@ -133,6 +133,9 @@ class BaseAgent(ABC):
 
             result.tokens_used = loop_result.total_tokens
             result.tool_calls_count = len(loop_result.tool_calls_log)
+            # Keep compatibility with lightweight test doubles and legacy
+            # adapters that predate RunLoopResult.total_steps.
+            result.total_steps = getattr(loop_result, "total_steps", 0)
             result.meta["raw_text"] = loop_result.content
             result.meta["models_used"] = loop_result.models_used
             result.meta["tool_calls_log"] = loop_result.tool_calls_log

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- [新功能] 支持 Multi-Agent 分阶段轨迹评估：保留既有扁平工具指标并增加阶段快照、局部/累计步数、完成/失败/跳过状态与可选期望阶段命中率，单 Agent 输出保持兼容（Refs #2347）。
+- [修复] Multi-Agent 各阶段的 `tool_metrics` 仅统计阶段本地调用，不再将样例级工具期望和步数预算错误应用到每个阶段。
+- [修复] Multi-Agent 顶层轨迹步数改由阶段快照累计，避免将 orchestrator 阶段数误判为 agent-loop 步数并漏报全局预算超限。
 - [新功能] Web/API runtime scheduler 硬超时后扫描已落库分析历史，**默认发送**部分完成通知（`DSA_TIMEOUT_PARTIAL_NOTIFY` 未设置或为 true；此前超时不推送已落库个股），并在 `last_error` 中记录 `completed/pending` 摘要；可用 `DSA_TIMEOUT_PARTIAL_NOTIFY=false` 关闭推送（Refs #2328）。
 - [测试] 修复股票名称解析冷启动超时并发测试的同步竞态：在放行后台抓取前确认两个等待者均已结束并返回空结果，避免 Docker 发布门禁偶发失败。
 - [文档] 将仓库内所有 SerpApi 链接统一更新为新的赞助转化追踪地址。
