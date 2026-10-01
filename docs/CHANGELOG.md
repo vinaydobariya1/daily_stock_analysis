@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- [修复] 个股资金流按沪深北市场请求并取最新有效交易日的主力净流入金额；去掉默认股票和市场排名的错误降级，行业排名仅使用有限金额，行业金额全部缺失或非有限时仍保留有效个股结果。
+
 - [修复] `REPORT_LANGUAGE=en` 时个股决策仪表盘的 system/user prompt 改用完整英文模板（`ko` 复用英文骨架并保留韩文输出指令），不再在中文模板末尾追加英文约束，避免本地小模型（如 `ollama/qwen3:14b`）受主语言影响仍输出中文；JSON 键名、`decision_type`/`action` 枚举与解析契约不变，中文模板保持逐字不变（Fixes #2352）。
 
 - [修复] 基本面适配按明确报告期调用 AkShare 业绩预告、快报及机构持股，修正十大股东市场代码并限制结果为目标股票；按真实指标生成快报摘要，避免旧默认日期、公告日期冒充摘要和跨指标错误降级。
+- [修复] 基本面财务摘要按“指标行 + 报告期列”解析最新报告期，兼容 AkShare 带单位的指标名及“归属净利润”口径，区分同比百分比与财务金额；全空指标和仅日期的结果不再标记成功，不跨报告期补值。
 
 - [修复] 桌面后端打包完整收集 MiniRacer 原生运行文件，并在 Windows/macOS 冻结产物中实际执行 JavaScript，防止筹码分布因漏包或版本错配永久失败。
 
@@ -23,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - [新功能] Web/API runtime scheduler 硬超时后扫描已落库分析历史，**默认发送**部分完成通知（`DSA_TIMEOUT_PARTIAL_NOTIFY` 未设置或为 true；此前超时不推送已落库个股），并在 `last_error` 中记录 `completed/pending` 摘要；可用 `DSA_TIMEOUT_PARTIAL_NOTIFY=false` 关闭推送（Refs #2328）。
 - [测试] 修复股票名称解析冷启动超时并发测试的同步竞态：在放行后台抓取前确认两个等待者均已结束并返回空结果，避免 Docker 发布门禁偶发失败。
 - [文档] 将仓库内所有 SerpApi 链接统一更新为新的赞助转化追踪地址。
+- [修复] Codex 问股将当前激活的交易 Skill 指令传入最终请求，保留会话继承、显式清空及默认技能语义；限定在三个已保存数据工具内执行，缺失数据或能力时明确披露。
 - [修复] 智能导入兼容带 UTF-8 BOM 的 CSV 与剪贴板文本，避免 `code` 表头被误当成数据并丢失有效股票代码。
 - [修复] 为 AkShare 大盘涨跌统计的东财与新浪降级调用增加可强制终止的子进程超时，避免外部接口无响应时长期占用分析线程（Fixes #2340）。
 

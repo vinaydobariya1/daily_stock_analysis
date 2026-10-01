@@ -231,6 +231,12 @@ LONGBRIDGE_ACCESS_TOKEN=your_access_token
 新记录会把该三态值随分析结果持久化，保证实时报告和历史报告一致。旧记录若没有保存
 `news_result_count`，其新闻检索状态只能视为未知，历史展示保持原样，不会倒推为“未配置搜索渠道”。
 
+## 资金流数据边界
+
+个股资金流通过 AkShare `stock_individual_fund_flow` 显式传入股票代码和沪深北市场，按有效日期选择最新交易日，读取 `主力净流入-净额`（元）。不把净占比、排名、默认股票或其他股票的数据当成目标股票的资金流。当前日线接口不提供 5 日 / 10 日累计金额，这两个字段保持缺失。
+
+行业排名只读取 `stock_sector_fund_flow_rank` 的 `今日主力净流入-净额`，不降级到某个行业的个股明细表。行业金额中的缺失值及正负无穷值被过滤，零值和负值保留；全部金额无效时返回空排名，仍保留已取得的个股金额及来源链。个股源失败时仍可返回行业排名；没有有效日期或有限金额时不标记个股资金流成功。上述边界遵循 [AkShare 官方接口契约](https://akshare.akfamily.xyz/data/stock/stock.html)。本节为中文专题说明，没有对应英文文档。
+
 ## 后续可做的产品化增强
 
 1. 数据源 Doctor 页面：展示每个源最近成功时间、失败原因、熔断状态和下一次恢复探测时间。
@@ -238,6 +244,14 @@ LONGBRIDGE_ACCESS_TOKEN=your_access_token
 3. 选股状态面板：直接展示 snapshot/daily source health，让用户知道是 Sina、Efinance、AkShare 还是 Tushare 出问题。
 4. 批量任务限速策略：对免费源自动降低并发，优先复用本地日线缓存，减少触发上游限流。
 5. 可选商业源接入：只有在现有 Tushare / TickFlow / Longbridge / Finnhub / AlphaVantage 仍不能覆盖需求时，再考虑新增 Twelve Data、Massive/Polygon、Nasdaq Data Link 等源。
+
+## 财务摘要表结构
+
+AkShare `stock_financial_abstract` 返回“指标行 + 报告期列”的宽表。适配层选取最新有效报告期列，以明确的指标名读取收入、归母净利润、经营现金流、同比增长率、ROE 和毛利率。同比百分比不能填入金额字段；缺失值保持缺失，不跨报告期补值。仅有报告日期或全部指标为空时，不标记财务数据成功。普通行表仍沿用现有解析路径。
+
+指标别名兼容上游带单位的名称，包括 `营业总收入(元)`、`归属净利润(元)`、`营业总收入同比增长(%)`、`归属净利润同比增长(%)`、`经营现金流量净额(元)`、`净资产收益率(加权)(%)` 和 `销售毛利率(%)`；仍按完整名称精确匹配，避免混淆金额、百分比与不同口径的指标。
+
+接口形状参考 [AkShare 官方文档](https://akshare.akfamily.xyz/data/stock/stock.html)。本节为中文专题说明，没有对应英文文档。
 
 ## 官方资料
 
