@@ -430,6 +430,8 @@ def test_forecast_text_does_not_fall_back_to_announcement_or_numeric_change(monk
      "经营活动产生的现金流量净额(元)", "净资产收益率(%)", "销售毛利率(%)"],
     ["营业总收入同比增长(%)", "归属净利润同比增长(%)", "营业总收入(元)", "归属净利润(元)",
      "经营现金流量净额(元)", "净资产收益率(加权)(%)", "销售毛利率(%)"],
+    ["营业总收入增长率", "归属母公司净利润增长率", "营业总收入", "归母净利润",
+     "经营现金流量净额", "净资产收益率(ROE)", "毛利率"],
 ])
 def test_financial_abstract_wide_table_uses_latest_period_and_exact_metrics(monkeypatch, metrics):
     table = pd.DataFrame({
